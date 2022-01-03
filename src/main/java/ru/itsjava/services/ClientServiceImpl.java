@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ClientServiceImpl implements ClientService {
     // создаем константы
@@ -34,6 +35,10 @@ public class ClientServiceImpl implements ClientService {
 
             // считываем с консоли
             MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
+
+//            Scanner scanner = new Scanner(System.in);
+            MenuService menuService = new MenuServiceImpl(messageInputService);
+            menuService.menu();
 
             System.out.println("Введите свой логин:");
             String login = messageInputService.getMessage();

@@ -12,7 +12,7 @@ public class SocketRunnable implements Runnable{
     @SneakyThrows
     @Override
     public void run() {
-        // задаем объект serverReader для идентификации, считывания сообщений с сервера
+        // задаем объект serverReader для идентификации, считывания сообщения с сервера
         // serverReader зависит от socket.getInputStream()
         MessageInputService serverReader = new MessageInputServiceImpl(socket.getInputStream());
 
