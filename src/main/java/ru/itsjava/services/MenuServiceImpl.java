@@ -1,29 +1,29 @@
 package ru.itsjava.services;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Scanner;
-
 @RequiredArgsConstructor
+@Getter
 public class MenuServiceImpl implements MenuService {
     private final ClientService clientService;
-    private final Scanner scanner;
 
     @Override
     public void menu() {
-        while (true) {
-            printMenu();
-            System.out.println("Выберите пункт из меню");
-            int menuNum = scanner.nextInt();
-            switch (menuNum) {
-                case 1:
-                    clientService.toString("!autho!");
-                    break;
-                case 2:
+//        while (true) {
+        printMenu();
+        System.out.println("Выберите пункт из меню");
+        MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
+        String menuNum = messageInputService.getMessage();
 
-                    break;
-            }
+        if (menuNum.equals("1")) {
+            System.out.println("Вы выбрали авторизацию");
+            clientService.authorizationUser();
+        } else if (menuNum.equals("2")) {
+            System.out.println("Вы выбрали регистрацию");
+            clientService.registrationNewUser();
         }
+//    }
     }
 
     @Override
