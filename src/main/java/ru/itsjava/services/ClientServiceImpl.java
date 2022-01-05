@@ -1,18 +1,19 @@
 package ru.itsjava.services;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
+@RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
     // создаем константы
     public final static int PORT = 8081; // порт подключения к серверу
     public final static String HOST = "localhost"; // строка подключения е серверу
     boolean isExit = false; // создание переменной isExit для проверки ввода "exit" для выхода из чата
+    private String login;
+    private String password;
 
     @SneakyThrows
     @Override
@@ -37,21 +38,8 @@ public class ClientServiceImpl implements ClientService {
             MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
 
 //            Scanner scanner = new Scanner(System.in);
-            MenuService menuService = new MenuServiceImpl(messageInputService);
+            MenuService menuService = new MenuServiceImpl(this);
             menuService.menu();
-
-            System.out.println("Введите свой логин:");
-            String login = messageInputService.getMessage();
-
-            System.out.println("Введите свой пароль:");
-            String password = messageInputService.getMessage();
-
-            // после ввода логина и пароля - их нужно отправить на сервер
-            // !autho!login:password
-            // теперь конкатенируем - все собираем
-            serverWriter.println("!autho!" + login + ":" + password);
-            // теперь отправляем все это на сервер
-            serverWriter.flush();
 
             // считывать в цикле и отправлять сообщения
             while (!isExit) {
@@ -61,7 +49,7 @@ public class ClientServiceImpl implements ClientService {
 
                 isExit = consoleMessage.equals("exit");
                 // проверка ввода клиентом слова "exit"
-                if (isExit){
+                if (isExit) {
                     serverWriter.println("Всем пока!");
                     serverWriter.flush(); // скинуть буфферезированные данные в поток
                     System.exit(0);
@@ -72,5 +60,41 @@ public class ClientServiceImpl implements ClientService {
                 serverWriter.flush(); // скинуть буфферезированные данные в поток
             }
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public void authorizationUser() {
+        Socket socket = new Socket(HOST, PORT);
+        PrintWriter serverWriter = new PrintWriter(socket.getOutputStream());
+        MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
+        System.out.println("Введите свой логин:");
+        login = messageInputService.getMessage();
+        System.out.println("Введите свой пароль:");
+        password = messageInputService.getMessage();
+        // после ввода логина и пароля - их нужно отправить на сервер
+        // !autho!login:password
+        // теперь конкатенируем - все собираем
+        serverWriter.println("!autho!" + login + ":" + password);
+        // теперь отправляем все это на сервер
+        serverWriter.flush();
+    }
+
+    @SneakyThrows
+    @Override
+    public void registrationNewUser() {
+        Socket socket = new Socket(HOST, PORT);
+        PrintWriter serverWriter = new PrintWriter(socket.getOutputStream());
+        MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
+        System.out.println("Введите свой логин:");
+        login = messageInputService.getMessage();
+        System.out.println("Введите свой пароль:");
+        password = messageInputService.getMessage();
+        // после ввода логина и пароля - их нужно отправить на сервер
+        // !reg!login:password
+        // теперь конкатенируем - все собираем
+        // теперь отправляем все это на сервер
+        serverWriter.println("!reg!" + login + ":" + password);
+        serverWriter.flush();
     }
 }
