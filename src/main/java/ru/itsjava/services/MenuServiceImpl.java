@@ -10,7 +10,6 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void menu() {
-//        while (true) {
         printMenu();
         System.out.println("Выберите пункт из меню");
         MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
@@ -23,11 +22,11 @@ public class MenuServiceImpl implements MenuService {
             System.out.println("Вы выбрали регистрацию");
             clientService.registrationNewUser();
         }
-//    }
     }
 
     @Override
     public void printMenu() {
         System.out.println("1 - авторизация; 2 - регистрация");
     }
+
 }

@@ -12,8 +12,7 @@ public class ClientServiceImpl implements ClientService {
     public final static int PORT = 8081; // порт подключения к серверу
     public final static String HOST = "localhost"; // строка подключения е серверу
     boolean isExit = false; // создание переменной isExit для проверки ввода "exit" для выхода из чата
-    private String login;
-    private String password;
+    private int statusMenu = 0;
 
     @SneakyThrows
     @Override
@@ -37,9 +36,25 @@ public class ClientServiceImpl implements ClientService {
             // считываем с консоли
             MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
 
-//            Scanner scanner = new Scanner(System.in);
             MenuService menuService = new MenuServiceImpl(this);
             menuService.menu();
+
+            System.out.println("Введите свой логин:");
+            String login = messageInputService.getMessage();
+            System.out.println("Введите свой пароль:");
+            String password = messageInputService.getMessage();
+
+            // после ввода логина и пароля - их нужно отправить на сервер
+            // !autho!login:password
+            // теперь конкатенируем - все собираем
+            if (statusMenu == 1) {
+                serverWriter.println("!autho!" + login + ":" + password);
+                // !reg!login:password
+            } else if (statusMenu == 2) {
+                serverWriter.println("!reg!" + login + ":" + password);
+            }
+            // теперь отправляем все это на сервер
+            serverWriter.flush();
 
             // считывать в цикле и отправлять сообщения
             while (!isExit) {
@@ -65,36 +80,13 @@ public class ClientServiceImpl implements ClientService {
     @SneakyThrows
     @Override
     public void authorizationUser() {
-        Socket socket = new Socket(HOST, PORT);
-        PrintWriter serverWriter = new PrintWriter(socket.getOutputStream());
-        MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
-        System.out.println("Введите свой логин:");
-        login = messageInputService.getMessage();
-        System.out.println("Введите свой пароль:");
-        password = messageInputService.getMessage();
-        // после ввода логина и пароля - их нужно отправить на сервер
-        // !autho!login:password
-        // теперь конкатенируем - все собираем
-        serverWriter.println("!autho!" + login + ":" + password);
-        // теперь отправляем все это на сервер
-        serverWriter.flush();
+        statusMenu = 1;
     }
 
     @SneakyThrows
     @Override
     public void registrationNewUser() {
-        Socket socket = new Socket(HOST, PORT);
-        PrintWriter serverWriter = new PrintWriter(socket.getOutputStream());
-        MessageInputService messageInputService = new MessageInputServiceImpl(System.in);
-        System.out.println("Введите свой логин:");
-        login = messageInputService.getMessage();
-        System.out.println("Введите свой пароль:");
-        password = messageInputService.getMessage();
-        // после ввода логина и пароля - их нужно отправить на сервер
-        // !reg!login:password
-        // теперь конкатенируем - все собираем
-        // теперь отправляем все это на сервер
-        serverWriter.println("!reg!" + login + ":" + password);
-        serverWriter.flush();
+        statusMenu = 2;
     }
+
 }
